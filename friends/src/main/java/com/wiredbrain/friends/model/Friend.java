@@ -23,6 +23,14 @@ public class Friend {
     @JsonIgnore
     boolean married;
 
+    public Friend(@NotBlank String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public Friend() {
+    }
+
     @JsonManagedReference
     @OneToMany(mappedBy = "friend", cascade = CascadeType.ALL)
     List<Address> addresses;

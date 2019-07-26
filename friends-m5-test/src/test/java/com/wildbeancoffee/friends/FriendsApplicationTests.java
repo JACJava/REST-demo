@@ -1,7 +1,6 @@
-package com.wiredbrain.friends;
+package com.wildbeancoffee.friends;
 
-import com.wiredbrain.friends.controller.FriendController;
-import com.wiredbrain.friends.service.FriendService;
+import com.wildbeancoffee.friends.controllers.FriendController;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +17,6 @@ public class FriendsApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		System.out.println("Here in the test");
 		Assert.assertNotNull(friendController);
-
 	}
-
 }

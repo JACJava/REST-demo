@@ -18,50 +18,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.wiredbrain.friends.model.Friend;
+import com.wiredbrain.friends.service.FriendService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+
+import javax.validation.ValidationException;
+import java.util.Optional;
+
 @RestController
 public class FriendController {
 
     @Autowired
     FriendService friendService;
 
-//    @PostMapping("/friend")
-//    Friend create(@RequestBody Friend friend) {
-//        if(friend.getId() == 0 && friend.getFirstName() !=null && friend.getLastName() !=null) {
-//            return friendService.save(friend);
-//        }
-//        else {
-//            throw new ValidationException("friend cannot be created");
-//        }
-//    }
     @PostMapping("/friend")
-    Friend create(@Valid @RequestBody Friend friend)  {
+    Friend create(@RequestBody Friend friend)  {
         return friendService.save(friend);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    List<FieldErrorMessage> exceptionHandler(MethodArgumentNotValidException e) {
-        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-        List<FieldErrorMessage> fieldErrorMessages = fieldErrors.stream().map(fieldError ->
-                new FieldErrorMessage(fieldError.getField(), fieldError.getDefaultMessage())).collect(Collectors.toList());
-
-        return fieldErrorMessages;
-    }
-
-
-//  didn't show how to call the ControllerExceptionHandler -- so skipping and using prior example instead
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ValidationException.class)
-
-// spits out error message in text form
-//    ResponseEntity<String> exceptionHandler(ValidationException e ) {
-//        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-//    }
-
-// spits out error message in JSON form
-    ErrorMessage exceptionHandler(ValidationException e ) {
-        return new ErrorMessage("400", e.getMessage());
     }
 
     @GetMapping("/friend")
@@ -70,36 +45,24 @@ public class FriendController {
     }
 
     @PutMapping("/friend")
-    ResponseEntity<Friend> update(@RequestBody Friend friend) {
-        if(friendService.findById(friend.getId()).isPresent())
-            return new ResponseEntity(friendService.save(friend), HttpStatus.OK);
-        else
-            return new ResponseEntity(friend, HttpStatus.BAD_REQUEST);
+    Friend update(@RequestBody Friend friend) {
+        return friendService.save(friend);
     }
+
     @DeleteMapping("/friend/{id}")
     void delete(@PathVariable Integer id) {
         friendService.deleteById(id);
     }
 
-    @GetMapping("/friend/{id}")
-    Optional<Friend> findById(@PathVariable Integer id) {
-        return friendService.findById(id);
+    @GetMapping("/wrong")
+    Friend somethingIsWrong() {
+        throw new ValidationException("Something is wrong");
     }
 
-    @GetMapping("/friend/search")
-    Iterable<Friend> findByQuery(
-            @RequestParam(value = "first", required = false) String firstName,
-            @RequestParam(value = "last", required = false ) String lastName)
-    {
-        if (firstName != null && lastName != null)
-            return friendService.findByFirstNameAndLastName(firstName, lastName);
-        else if (firstName != null)
-                return friendService.findByFirstName(firstName);
-            else if (lastName != null)
-                return friendService.findByLastName(lastName);
-                else
-                return friendService.findAll();
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ValidationException.class)
+    String exceptionHandler(ValidationException e) {
+        return e.getMessage();
     }
-
-
 }
+
