@@ -22,9 +22,10 @@ public class SystemTests {
 
     Friend[] friends = restTemplate.getForObject(url, Friend[].class);
     Assertions.assertThat(friends).extracting(Friend::getFirstName).containsOnly("Gordon");
+    //Assertions.assertThat(friends).extracting(Friend::getFirstName).contains("Gordon");
 
-    //restTemplate.delete(url + "/" + entity.getBody().getId());
-    //Assertions.assertThat(restTemplate.getForObject(url, Friend[].class)).isEmpty();
+    restTemplate.delete(url + "/" + entity.getBody().getId());
+    Assertions.assertThat(restTemplate.getForObject(url, Friend[].class)).isEmpty();
   }
 
 //  @Test
